@@ -3,6 +3,9 @@ from src.schemas.disease_schema import DiseaseRequest
 from src.predict.predict_disease import predict_disease
 from src.schemas.heart_schema import HeartRequest
 from src.predict.predict_heart import predict_heart
+from src.schemas.diabetes_schema import DiabetesRequest
+from src.predict.predict_diabetes import predict_diabetes
+
 
 router = APIRouter()
 
@@ -29,6 +32,15 @@ def predict(req: DiseaseRequest):
 @router.post("/predict-heart-risk")
 def predict_heart_api(req: HeartRequest):
     result = predict_heart(req.dict())
+
+    return {
+        "status": "success",
+        "data": result
+    }
+
+@router.post("/predict-diabetes")
+def predict_diabetes_api(req: DiabetesRequest):
+    result = predict_diabetes(req.dict())
 
     return {
         "status": "success",
