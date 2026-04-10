@@ -1,0 +1,12 @@
+# ML files
+*.pkl
+*.csv
+data/
+models/
+
+# Python
+__pycache__/
+*.pyc
+
+# Env
+.env
