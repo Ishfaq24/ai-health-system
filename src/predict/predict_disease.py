@@ -1,23 +1,34 @@
 import pickle
 import json
 import numpy as np
+import os
 from src.config import MODEL_PATH, ENCODER_PATH, COLUMNS_PATH
 
-# Load everything once (efficient)
+# Debug check (optional)
+print("MODEL PATH:", MODEL_PATH)
+print("MODEL EXISTS:", os.path.exists(MODEL_PATH))
+
+# Load model
 model = pickle.load(open(MODEL_PATH, "rb"))
 encoder = pickle.load(open(ENCODER_PATH, "rb"))
 columns = json.load(open(COLUMNS_PATH))
 
 
 def predict_disease(symptoms: list):
+    # Validate symptoms
+    valid_symptoms = [s for s in symptoms if s in columns]
+
+    if not valid_symptoms:
+        return {
+            "error": "No valid symptoms provided"
+        }
+
     # Create input vector
     input_data = [0] * len(columns)
 
-    # Fill symptoms
-    for symptom in symptoms:
-        if symptom in columns:
-            index = columns.index(symptom)
-            input_data[index] = 1
+    for symptom in valid_symptoms:
+        index = columns.index(symptom)
+        input_data[index] = 1
 
     input_array = np.array(input_data).reshape(1, -1)
 
@@ -32,5 +43,6 @@ def predict_disease(symptoms: list):
 
     return {
         "prediction": disease,
-        "top3": top3_diseases.tolist()
+        "top3": top3_diseases.tolist(),
+        "used_symptoms": valid_symptoms
     }
